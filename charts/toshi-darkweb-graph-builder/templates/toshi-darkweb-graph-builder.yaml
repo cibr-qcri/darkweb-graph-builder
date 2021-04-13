@@ -19,18 +19,16 @@ spec:
     spec:
       containers:
         - name: darkweb-graph-builder
-          image: "{{ .Values.darkweb.graph.image.name }}:{{ .Values.darkweb.graph.image.tag }}"
-          imagePullPolicy: {{ .Values.darkweb.graph.image.pullPolicy }}
+          image: "{{ .Values.darkweb.image.name }}:{{ .Values.darkweb.image.tag }}"
+          imagePullPolicy: {{ .Values.darkweb.image.pullPolicy }}
           env:
-            - name: MOUNT_PATH
-              value: {{ .Values.darkweb.graph.image.volume.mountPath }}
             - name: RABBITMQ_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.darkweb.graph.rabbitmq.token }}
+                  name: {{ .Values.darkweb.rabbitmq.token }}
                   key: token
             - name: RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.darkweb.graph.rabbitmq.password }}
+                  name: {{ .Values.darkweb.rabbitmq.password }}
                   key: password
