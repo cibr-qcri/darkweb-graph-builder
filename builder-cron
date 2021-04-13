@@ -1,0 +1,1 @@
+0 0 * * FRI python /usr/src/app/exporter.py >> /var/log/cron.log 2>&1

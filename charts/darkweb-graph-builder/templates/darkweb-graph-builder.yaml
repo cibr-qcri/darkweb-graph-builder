@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: toshi-darkweb-graph-builder-deployment
+  labels:
+    app: toshi-bitcoin-parser
+    tier: darkweb-graph
+spec:
+  replicas:
+  selector:
+    matchLabels:
+      app: toshi-darkweb-graph-builder
+      tier: darkweb-graph
+  template:
+    metadata:
+      labels:
+        app: toshi-darkweb-graph-builder
+        tier: darkweb-graph
+    spec:
+      containers:
+        - name: darkweb-graph-builder
+          image: "{{ .Values.darkweb.graph.image.name }}:{{ .Values.darkweb.graph.image.tag }}"
+          imagePullPolicy: {{ .Values.darkweb.graph.image.pullPolicy }}
+          env:
+            - name: MOUNT_PATH
+              value: {{ .Values.darkweb.graph.image.volume.mountPath }}
+            - name: RABBITMQ_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.darkweb.graph.rabbitmq.token }}
+                  key: token
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.darkweb.graph.rabbitmq.password }}
+                  key: password

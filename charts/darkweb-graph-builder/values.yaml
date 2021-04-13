@@ -1,0 +1,8 @@
+darkweb.graph:
+  image:
+    name: "toshiqcri/toshi-darkweb-graph-builder"
+    tag: "1.0.0"
+    pullPolicy: Always
+  rabbitmq:
+    token: rabbitmq-token-sqlzz
+    password: rabbitmq
