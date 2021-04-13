@@ -24,7 +24,7 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          tags: toshiqcri/toshi-bitcoin-parser:0.0.0
+          tags: toshiqcri/toshi-darkweb-graph-builderr:0.0.0
           push: true
   publish_helm_charts:
     name: Publish Helm Charts
@@ -34,9 +34,9 @@ jobs:
         with:
           ref: develop
       - name: Modify helm chart version
-        run: sed -i "s/version:.*/version:\ 0.0.0/g" charts/toshi-bitcoin-parser/Chart.yaml
+        run: sed -i "s/version:.*/version:\ 0.0.0/g" charts/toshi-darkweb-graph-builder/Chart.yaml
       - name: Modify docker image version
-        run: sed -i "s/tag:.*/tag:\ \"0.0.0\"/g" charts/toshi-bitcoin-parser/values.yaml
+        run: sed -i "s/tag:.*/tag:\ \"0.0.0\"/g" charts/toshi-darkweb-graph-builder/values.yaml
       - name: Install Helm
         uses: azure/setup-helm@v1
         with:

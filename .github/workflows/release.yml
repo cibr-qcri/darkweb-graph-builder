@@ -29,7 +29,7 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          tags: "toshiqcri/toshi-bitcoin-parser:${{ steps.fetch_release_info.outputs.version }}"
+          tags: "toshiqcri/toshi-darkweb-graph-builder:${{ steps.fetch_release_info.outputs.version }}"
           push: true
   publish_helm_charts:
     name: Publish Helm Charts

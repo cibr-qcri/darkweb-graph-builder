@@ -21,7 +21,7 @@ jobs:
     - name: Change version number and name
       run: printf 'next.version_name = "${{ github.event.inputs.versionName }}"\n' > release_version.txt
     - name: Bump helm chart version
-      run: sed -i "s/version:.*/version:\ ${{ github.event.inputs.versionName }}/g" charts/toshi-bitcoin-parser/Chart.yaml
+      run: sed -i "s/version:.*/version:\ ${{ github.event.inputs.versionName }}/g" charts/toshi-darkweb-graph-builder/Chart.yaml
     - name: Update Changelog
       uses: heinrichreimer/github-changelog-generator-action@v2.1.1
       with:
@@ -30,7 +30,7 @@ jobs:
       id: make-commit
       run: |
         git add release_version.txt
-        git add charts/toshi-bitcoin-parser/Chart.yaml
+        git add charts/toshi-darkweb-graph-builder/Chart.yaml
         git add CHANGELOG.md
         git commit --message "Prepare release ${{ github.event.inputs.versionName }}"
         echo "::set-output name=commit::$(git rev-parse HEAD)"
