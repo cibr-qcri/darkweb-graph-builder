@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 from elasticsearch import Elasticsearch
 from tqdm import tqdm
 
-from arango import ArangoDB
+from arangodb import ArangoDB
 
 GET_DOMAINS_QUERY = {
     "bool": {
