@@ -21,14 +21,3 @@ spec:
         - name: darkweb-graph-builder
           image: "{{ .Values.darkweb.image.name }}:{{ .Values.darkweb.image.tag }}"
           imagePullPolicy: {{ .Values.darkweb.image.pullPolicy }}
-          env:
-            - name: RABBITMQ_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.darkweb.rabbitmq.token }}
-                  key: token
-            - name: RABBITMQ_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.darkweb.rabbitmq.password }}
-                  key: password
