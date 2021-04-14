@@ -39,25 +39,28 @@ class ArangoDB(metaclass=singleton.Singleton):
             pass
 
     def insert_edge(self, from_vtx, to_vtx, weight):
-        edge_out, edge_in = self.create_edges(from_vtx, to_vtx, weight)
+        edge = self.create_edge(from_vtx, to_vtx, weight)
         try:
-            self.edges.insert(edge_out)
-            self.edges.insert(edge_in)
+            self.edges.insert(edge)
         except DocumentInsertError:
             pass
 
+    def batch_insert(self, domains, edges):
+        batch_db = self.db.begin_batch_execution(return_result=False)
+        batch_domains = batch_db.collection('domains')
+        batch_edges = batch_db.collection('edges')
+        for domain in domains:
+            batch_domains.insert({'_key': domain})
+        for from_vtx, to_vtx, weight in edges:
+            batch_edges.insert(self.create_edge(from_vtx, to_vtx, weight))
+
+        batch_db.commit()
+
     @staticmethod
-    def create_edges(from_vtx, to_vtx, weight):
-        edge_out = dict()
-        edge_out['_from'] = 'domains/{0}'.format(from_vtx)
-        edge_out['_to'] = 'domains/{0}'.format(to_vtx)
-        edge_out['weight'] = weight
-        edge_out['label'] = 'links_to'
+    def create_edge(from_vtx, to_vtx, weight):
+        edge = dict()
+        edge['_from'] = 'domains/{0}'.format(from_vtx)
+        edge['_to'] = 'domains/{0}'.format(to_vtx)
+        edge['weight'] = weight
 
-        edge_in = dict()
-        edge_in['_from'] = 'domains/{0}'.format(to_vtx)
-        edge_in['_to'] = 'domains/{0}'.format(from_vtx)
-        edge_in['weight'] = weight
-        edge_in['label'] = 'links_from'
-
-        return edge_out, edge_in
+        return edge

@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 from elasticsearch import Elasticsearch
 from tqdm import tqdm
 
-from arango_db import ArangoDB
+from arango import ArangoDB
 
 GET_DOMAINS_QUERY = {
     "bool": {
@@ -14,6 +14,11 @@ GET_DOMAINS_QUERY = {
             "multi_match": {
                 "query": "tor",
                 "fields": ["source"]
+            }
+        },
+        "filter": {
+            "exists": {
+                "field": "info.external_urls.href_urls.tor"
             }
         }
     }
@@ -46,16 +51,14 @@ def add_to_set(st, item):
 
 def export_to_arango(domains):
     db = ArangoDB()
-    persisted_domains = set()
     for domain, urls in tqdm(domains.items()):
-        if domain not in persisted_domains:
-            db.insert_domain(domain)
-            persisted_domains.add(domain)
+        domain_nodes = set()
+        edges = list()
+        domain_nodes.add(domain)
         for url, count in urls.items():
-            if url not in persisted_domains:
-                db.insert_domain(url)
-                persisted_domains.add(url)
-            db.insert_edge(domain, url, count)
+            domain_nodes.add(url)
+            edges.append((domain, url, count))
+        db.batch_insert(domain_nodes, edges)
 
 
 def get_es_records():
