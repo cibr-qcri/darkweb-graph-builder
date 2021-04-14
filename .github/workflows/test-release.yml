@@ -24,7 +24,7 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          tags: toshiqcri/toshi-darkweb-graph-builderr:0.0.0
+          tags: toshiqcri/toshi-darkweb-graph-builder:0.0.0
           push: true
   publish_helm_charts:
     name: Publish Helm Charts
