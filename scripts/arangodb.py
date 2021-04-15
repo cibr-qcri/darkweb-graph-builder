@@ -14,23 +14,18 @@ class ArangoDB(metaclass=singleton.Singleton):
 
         self.db = client.db('tor', username='root', password='')
 
-        if self.db.has_graph('darkweb'):
-            self.graph = self.db.graph('darkweb')
-        else:
-            self.graph = self.db.create_graph('darkweb')
-
-        if not self.graph.has_vertex_collection("domains"):
-            self.domains = self.graph.create_vertex_collection("domains")
-        else:
-            self.domains = self.graph.vertex_collection("domains")
-
-        if not self.graph.has_edge_definition("edges"):
-            self.edges = self.graph.create_edge_definition(
-                edge_collection="edges",
-                from_vertex_collections=["domains"],
-                to_vertex_collections=["domains"])
-        else:
-            self.edges = self.graph.edge_collection("edges")
+        if not self.db.has_graph('darkweb'):
+            self.db.create_collection(name='domains', shard_fields=['_key'], shard_count=8)
+            self.db.create_collection(name='edges', edge=True, shard_fields=['vertex'],
+                                      shard_count=8, shard_like='domains')
+            self.db.create_graph(name='darkweb', edge_definitions=[{
+                'edge_collection': 'edges',
+                'from_vertex_collections': ['domains'],
+                'to_vertex_collections': ['domains']
+            }], shard_count=8)
+        self.graph = self.db.graph('darkweb')
+        self.domains = self.graph.vertex_collection("domains")
+        self.edges = self.graph.edge_collection("edges")
 
     def insert_domain(self, domain):
         try:
@@ -61,6 +56,7 @@ class ArangoDB(metaclass=singleton.Singleton):
         edge = dict()
         edge['_from'] = 'domains/{0}'.format(from_vtx)
         edge['_to'] = 'domains/{0}'.format(to_vtx)
+        edge['vertex'] = from_vtx
         edge['weight'] = weight
 
         return edge
